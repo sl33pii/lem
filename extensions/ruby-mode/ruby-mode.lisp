@@ -3,7 +3,9 @@
   (:import-from :lem-js-mode
                 :get-line-indent
                 :move-to-previous-line)
-  (:export :ruby-mode))
+  (:export :ruby-mode
+           :*ruby-syntax-table*
+           :*ruby-mode-keymap*))
 
 (in-package :lem-ruby-mode)
 
@@ -104,15 +106,18 @@
 
 (define-major-mode ruby-mode language-mode
     (:name "Ruby"
+     :keymap *ruby-mode-keymap*
      :syntax-table *ruby-syntax-table*
      :mode-hook *ruby-mode-hook*)
   (setf (variable-value 'enable-syntax-highlight) t
-		(variable-value 'indent-tabs-mode) nil 
-		(variable-value 'calc-indent-function) 'ruby-calc-indent
-		(variable-value 'tab-width) 2
-		(variable-value 'line-comment) "#"
-		(variable-value 'beginning-of-defun-function) 'beginning-of-defun
-		(variable-value 'end-of-defun-function) 'end-of-defun))
+		    (variable-value 'indent-tabs-mode) nil 
+		    (variable-value 'calc-indent-function) 'ruby-calc-indent
+		    (variable-value 'tab-width) 2
+		    (variable-value 'line-comment) "#"
+		    (variable-value 'insertion-line-comment) "#"
+		    (variable-value 'beginning-of-defun-function) 'beginning-of-defun
+		    (variable-value 'end-of-defun-function) 'end-of-defun
+        ))
 
 (defun beginning-of-defun (point n)
   (loop :with regex = *ruby-block-start*
@@ -171,4 +176,16 @@
           (decf column tab-width)))
       column)))
 
-(define-file-type ("rb" "rspec" "Gemfile") ruby-mode)
+(define-file-type
+    ("rb"
+     "rspec"
+     "erb"
+     "gemspec"
+     "rake") ruby-mode)
+
+(define-file-associations ruby-mode
+  ((:file-namestring "Gemfile")
+   (:file-namestring "gemfile")
+   (:file-namestring "rakefile")
+   (:file-namestring "Rakefile")))
+
