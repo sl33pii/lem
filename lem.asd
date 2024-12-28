@@ -266,7 +266,8 @@
                "lem-terminal"
                "lem-legit"
                "lem-dashboard"
-               "lem-copilot"))
+               "lem-copilot"
+               "lem-which-key"))
 
 (defsystem "lem/executable"
   :build-operation program-op
